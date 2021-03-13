@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/auth0/go-jwt-middleware v1.0.0 // indirect
+	github.com/caarlos0/env/v6 v6.5.0
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-redis/redis/v7 v7.4.0 // indirect
 	github.com/gwuhaolin/livego v0.0.0-20210119152854-12948dfb6782
