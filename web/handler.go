@@ -1,18 +1,29 @@
 package web
 
 import (
+	"embed"
 	"fmt"
 	"github.com/petuhovskiy/chiwt/conf"
 	"net/http"
+	"net/url"
 )
 
+const resourcesPrefix = "resources/"
+
+//go:embed resources
+var resources embed.FS
+
 type Handler struct {
-	cfg *conf.App
+	cfg    *conf.App
+	render *Render
+	httpFS http.Handler
 }
 
-func NewHandler(cfg *conf.App) *Handler {
+func NewHandler(cfg *conf.App, render *Render) *Handler {
 	return &Handler{
-		cfg: cfg,
+		cfg:    cfg,
+		render: render,
+		httpFS: http.FileServer(http.FS(resources)),
 	}
 }
 
@@ -25,14 +36,19 @@ func (h *Handler) streamSource(name string) string {
 }
 
 func (h *Handler) MainPage(w http.ResponseWriter, r *http.Request) {
-	content := `
-<video src="%s">
-    <!-- Fallback here -->
-    No video :(
-</video>
-
-`
-
 	w.Header().Add("Content-type", "text/html")
-	fmt.Fprintf(w, content, h.streamSource(h.cfg.DefaultChannel))
+	h.render.Main(w)
+}
+
+func (h *Handler) Static(w http.ResponseWriter, r *http.Request) {
+	p := resourcesPrefix + r.URL.Path
+	rp := resourcesPrefix + r.URL.RawPath
+
+	r2 := new(http.Request)
+	*r2 = *r
+	r2.URL = new(url.URL)
+	*r2.URL = *r.URL
+	r2.URL.Path = p
+	r2.URL.RawPath = rp
+	h.httpFS.ServeHTTP(w, r2)
 }

@@ -25,7 +25,9 @@ func main() {
 	}
 	log.WithField("key", msg).Info("key for stream")
 
-	webHandler := web.NewHandler(cfg)
+	render := &web.Render{} // TODO:
+
+	webHandler := web.NewHandler(cfg, render)
 	webRouter := web.NewRouter(webHandler)
 	go web.StartHTTP("web", cfg.WebAddr, webRouter)
 
