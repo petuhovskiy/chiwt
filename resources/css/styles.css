@@ -35,3 +35,22 @@ body {
 .header-action-link:hover {
     color: #fff;
 }
+
+.content {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    grid-template-rows: 1fr auto;
+    grid-gap: 20px;
+    height: 100vh;
+}
+
+.nav-bar {
+    background-color: rgb(247, 246, 243);
+}
+
+.main-content {
+}
+
+.main-content > video {
+    max-width: 100%;
+}
