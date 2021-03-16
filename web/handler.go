@@ -40,6 +40,11 @@ func (h *Handler) MainPage(w http.ResponseWriter, r *http.Request) {
 	h.render.Main(w)
 }
 
+func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-type", "text/html")
+	h.render.SignIn(w)
+}
+
 func (h *Handler) Static(w http.ResponseWriter, r *http.Request) {
 	p := resourcesPrefix + r.URL.Path
 	rp := resourcesPrefix + r.URL.RawPath
@@ -51,4 +56,10 @@ func (h *Handler) Static(w http.ResponseWriter, r *http.Request) {
 	r2.URL.Path = p
 	r2.URL.RawPath = rp
 	h.httpFS.ServeHTTP(w, r2)
+}
+
+func (h *Handler) DoSignIn(w http.ResponseWriter, r *http.Request) {
+	username := r.FormValue("username")
+
+	fmt.Fprint(w, username)
 }

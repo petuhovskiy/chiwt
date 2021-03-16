@@ -23,3 +23,13 @@ func (r *Render) Main(w http.ResponseWriter) {
 
 	w.Write(b)
 }
+
+func (r *Render) SignIn(w http.ResponseWriter) {
+	b, err := resources.ReadFile("resources/signin.html")
+	if err != nil {
+		log.WithError(err).Error("failed to read file")
+		return
+	}
+
+	w.Write(b)
+}

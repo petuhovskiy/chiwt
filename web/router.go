@@ -13,9 +13,12 @@ func NewRouter(h *Handler) http.Handler {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Get("/", h.MainPage)
 	r.HandleFunc("/js/*", h.Static)
 	r.HandleFunc("/css/*", h.Static)
+
+	r.Get("/", h.MainPage)
+	r.Get("/signin", h.SignIn)
+	r.Post("/signin", h.DoSignIn)
 
 	return r
 }
