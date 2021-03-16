@@ -17,13 +17,15 @@ type Handler struct {
 	cfg    *conf.App
 	render *Render
 	httpFS http.Handler
+	auth   *Auth
 }
 
-func NewHandler(cfg *conf.App, render *Render) *Handler {
+func NewHandler(cfg *conf.App, render *Render, auth *Auth) *Handler {
 	return &Handler{
 		cfg:    cfg,
 		render: render,
 		httpFS: http.FileServer(http.FS(resources)),
+		auth:   auth,
 	}
 }
 
@@ -36,6 +38,11 @@ func (h *Handler) streamSource(name string) string {
 }
 
 func (h *Handler) MainPage(w http.ResponseWriter, r *http.Request) {
+	token, err := r.Cookie("jwt-auth")
+	if err == nil {
+		h.auth.ParseToken(token.Value)
+	}
+
 	w.Header().Add("Content-type", "text/html")
 	h.render.Main(w)
 }
@@ -61,5 +68,19 @@ func (h *Handler) Static(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) DoSignIn(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 
-	fmt.Fprint(w, username)
+	// TODO: verify username
+
+	token, err := h.auth.IssueToken(username)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, err)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:  "jwt-auth",
+		Value: token,
+	})
+
+	http.Redirect(w, r, "/", http.StatusFound)
 }

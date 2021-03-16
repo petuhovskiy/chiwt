@@ -26,8 +26,12 @@ func main() {
 	log.WithField("key", msg).Info("key for stream")
 
 	render := &web.Render{} // TODO:
+	auth, err := web.NewAuth()
+	if err != nil {
+		log.WithError(err).Fatal("failed to create auth")
+	}
 
-	webHandler := web.NewHandler(cfg, render)
+	webHandler := web.NewHandler(cfg, render, auth)
 	webRouter := web.NewRouter(webHandler)
 	go web.StartHTTP("web", cfg.WebAddr, webRouter)
 
