@@ -1,2 +1,37 @@
 .header {
+    background: #343434;
+    color: whitesmoke;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header > * {
+    margin: 10px;
+}
+
+.header :nth-child(2) {
+    margin-left: auto;
+}
+
+body {
+    margin: 0;
+}
+
+.header-site-link {
+    color: #fff;
+    font-size: 25px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.header-action-link {
+    color: #b4b4b4;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.header-action-link:hover {
+    color: #fff;
 }
