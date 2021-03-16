@@ -54,3 +54,59 @@ body {
 .main-content > video {
     max-width: 100%;
 }
+
+.chat-content {
+    border: solid #343434 3px;
+    padding: 5px;
+}
+
+.chat-input {
+    margin-top: 10px;
+}
+
+.signin-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.signin-box {
+    background: gainsboro;
+    display: flex;
+    flex-direction: column;
+    border-radius: 2px;
+}
+
+.signin-header {
+    text-align: center;
+}
+
+.signin-item {
+
+}
+
+.signin-form {
+    display: flex;
+    flex-direction: row;
+    padding: 30px;
+}
+
+.hidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.form-input {
+
+}
+
+.form-login input[type="submit"] {
+
+}
