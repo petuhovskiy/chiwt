@@ -3,14 +3,26 @@ package web
 import (
 	"crypto/rand"
 	"crypto/rsa"
+	"errors"
 	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jwt"
 	log "github.com/sirupsen/logrus"
+	"net/http"
 )
 
 const (
 	keyUsername = "username"
+	jwtCookie   = "jwt-auth"
 )
+
+type Token struct {
+	Username string
+}
+
+type AuthContext struct {
+	LoggedIn bool
+	Username string
+}
 
 type Auth struct {
 	key *rsa.PrivateKey
@@ -37,11 +49,12 @@ func (a *Auth) IssueToken(username string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return string(signed), nil
 }
 
-func (a *Auth) ParseToken(payload string) (jwt.Token, error) {
-	token, err := jwt.ParseString(
+func (a *Auth) ParseToken(payload string) (*Token, error) {
+	jt, err := jwt.ParseString(
 		payload,
 		jwt.WithValidate(true),
 		jwt.WithVerify(jwa.RS256, &a.key.PublicKey),
@@ -50,7 +63,39 @@ func (a *Auth) ParseToken(payload string) (jwt.Token, error) {
 		return nil, err
 	}
 
-	log.WithField("token", token).Info("parsed token")
+	username, ok := jt.Get(keyUsername)
+	if !ok {
+		return nil, errors.New("username not found")
+	}
 
-	return token, nil
+	ustr, ok := username.(string)
+	if !ok {
+		return nil, errors.New("username is not a string")
+	}
+
+	log.WithField("username", ustr).Debug("authorized request")
+
+	token := Token{
+		Username: ustr,
+	}
+
+	return &token, nil
+}
+
+func (a *Auth) FromRequest(r *http.Request) AuthContext {
+	cookie, err := r.Cookie(jwtCookie)
+	if err != nil {
+		return AuthContext{}
+	}
+
+	tokenStr := cookie.Value
+	t, err := a.ParseToken(tokenStr)
+	if err != nil {
+		return AuthContext{}
+	}
+
+	return AuthContext{
+		LoggedIn: true,
+		Username: t.Username,
+	}
 }

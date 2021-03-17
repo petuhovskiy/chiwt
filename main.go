@@ -1,11 +1,10 @@
 package main
 
 import (
-	"github.com/gwuhaolin/livego/configure"
 	"github.com/gwuhaolin/livego/protocol/hls"
-	"github.com/gwuhaolin/livego/protocol/httpflv"
 	"github.com/gwuhaolin/livego/protocol/rtmp"
 	"github.com/petuhovskiy/chiwt/bcast"
+	"github.com/petuhovskiy/chiwt/bcast/myflv"
 	"github.com/petuhovskiy/chiwt/conf"
 	"github.com/petuhovskiy/chiwt/web"
 	log "github.com/sirupsen/logrus"
@@ -18,25 +17,21 @@ func main() {
 	}
 
 	stream := rtmp.NewRtmpStream()
+	flvServer := myflv.NewServer(stream)
 
-	msg, err := configure.RoomKeys.GetKey(cfg.DefaultChannel)
+	render, err := web.NewRender()
 	if err != nil {
-		log.WithError(err).Fatal("failed to get key")
+		log.WithError(err).Fatal("failed to create render")
 	}
-	log.WithField("key", msg).Info("key for stream")
 
-	render := &web.Render{} // TODO:
 	auth, err := web.NewAuth()
 	if err != nil {
 		log.WithError(err).Fatal("failed to create auth")
 	}
 
 	webHandler := web.NewHandler(cfg, render, auth)
-	webRouter := web.NewRouter(webHandler)
+	webRouter := web.NewRouter(webHandler, flvServer)
 	go web.StartHTTP("web", cfg.WebAddr, webRouter)
-
-	flvServer := httpflv.NewServer(stream)
-	go bcast.StartFlvServer(flvServer, cfg.FlvAddr)
 
 	hlsServer := hls.NewServer()
 	go bcast.StartHlsServer(hlsServer, cfg.HlsAddr)

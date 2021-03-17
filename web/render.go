@@ -1,30 +1,40 @@
 package web
 
 import (
-	"embed"
+	"fmt"
 	log "github.com/sirupsen/logrus"
+	"html/template"
 	"net/http"
 )
 
-const templatesPrefix = "templates/"
-
-//go:embed templates
-var templates embed.FS
-
 type Render struct {
+	templates *template.Template
 }
 
-func (r *Render) Main(w http.ResponseWriter) {
-	b, err := resources.ReadFile("resources/index.html")
+func NewRender() (*Render, error) {
+	templates, err := template.New("stream").ParseFS(templates, "templates/*")
 	if err != nil {
-		log.WithError(err).Error("failed to read file")
-		return
+		return nil, err
 	}
 
-	w.Write(b)
+	return &Render{
+		templates: templates,
+	}, nil
+}
+
+func (r *Render) Main(w http.ResponseWriter, data RenderContext) {
+	w.Header().Add("Content-type", "text/html")
+
+	err := r.templates.ExecuteTemplate(w, "main.tmpl", data)
+	if err != nil {
+		log.WithError(err).Error("failed to execute template")
+		fmt.Fprint(w, err)
+	}
 }
 
 func (r *Render) SignIn(w http.ResponseWriter) {
+	w.Header().Add("Content-type", "text/html")
+
 	b, err := resources.ReadFile("resources/signin.html")
 	if err != nil {
 		log.WithError(err).Error("failed to read file")
@@ -32,4 +42,14 @@ func (r *Render) SignIn(w http.ResponseWriter) {
 	}
 
 	w.Write(b)
+}
+
+func (r *Render) Stream(w http.ResponseWriter, data RenderContext) {
+	w.Header().Add("Content-type", "text/html")
+
+	err := r.templates.ExecuteTemplate(w, "stream.tmpl", data)
+	if err != nil {
+		log.WithError(err).Error("failed to execute template")
+		fmt.Fprint(w, err)
+	}
 }
