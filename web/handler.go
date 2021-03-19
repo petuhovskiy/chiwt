@@ -6,7 +6,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/gwuhaolin/livego/configure"
 	"github.com/petuhovskiy/chiwt/conf"
+	"github.com/petuhovskiy/chiwt/rtchat"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/net/websocket"
 	"net/http"
 	"net/url"
 )
@@ -16,14 +18,16 @@ type Handler struct {
 	render *Render
 	httpFS http.Handler
 	auth   *Auth
+	chat   *rtchat.Server
 }
 
-func NewHandler(cfg *conf.App, render *Render, auth *Auth) *Handler {
+func NewHandler(cfg *conf.App, render *Render, auth *Auth, chat *rtchat.Server) *Handler {
 	return &Handler{
 		cfg:    cfg,
 		render: render,
 		httpFS: http.FileServer(http.FS(resources)),
 		auth:   auth,
+		chat:   chat,
 	}
 }
 
@@ -68,6 +72,32 @@ func (h *Handler) DoLogout(w http.ResponseWriter, r *http.Request) {
 	})
 
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func (h *Handler) ChatSubscribe(conn *websocket.Conn) {
+	chat := chi.URLParam(conn.Request(), "chat")
+
+	log.WithField("chat", chat).Info("chat subscription started")
+
+	err := h.chat.Subscribe(chat, func(msg rtchat.Message) error {
+		err := websocket.JSON.Send(conn, msg)
+		return err
+	})
+
+	log.WithField("chat", chat).WithError(err).Info("chat subscription finished")
+}
+
+func (h *Handler) ChatSend(w http.ResponseWriter, r *http.Request) {
+	chat := chi.URLParam(r, "chat")
+
+	auth := GetAuth(r)
+	if !auth.LoggedIn {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	message := r.FormValue("message")
+	h.chat.SendMessage(chat, auth.Username, message)
 }
 
 func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {

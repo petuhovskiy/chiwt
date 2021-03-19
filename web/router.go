@@ -4,6 +4,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/petuhovskiy/chiwt/bcast/myflv"
+	"golang.org/x/net/websocket"
 	"net/http"
 )
 
@@ -32,6 +33,10 @@ func NewRouter(h *Handler, flv *myflv.Server) http.Handler {
 
 	// video streams
 	r.Get("/live/{name}.flv", flv.LiveFLV)
+
+	// chat
+	r.Handle("/chat/{chat}/subscribe", websocket.Handler(h.ChatSubscribe))
+	r.Post("/chat/{chat}/send", h.ChatSend)
 
 	return r
 }

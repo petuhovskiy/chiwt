@@ -12,7 +12,7 @@ type Render struct {
 }
 
 func NewRender() (*Render, error) {
-	templates, err := template.New("stream").ParseFS(templates, "templates/*")
+	templates, err := template.New("stream").ParseFS(templates, templatesPrefix+"*")
 	if err != nil {
 		return nil, err
 	}

@@ -6,6 +6,7 @@ import (
 	"github.com/petuhovskiy/chiwt/bcast"
 	"github.com/petuhovskiy/chiwt/bcast/myflv"
 	"github.com/petuhovskiy/chiwt/conf"
+	"github.com/petuhovskiy/chiwt/rtchat"
 	"github.com/petuhovskiy/chiwt/web"
 	log "github.com/sirupsen/logrus"
 )
@@ -29,7 +30,9 @@ func main() {
 		log.WithError(err).Fatal("failed to create auth")
 	}
 
-	webHandler := web.NewHandler(cfg, render, auth)
+	chat := rtchat.NewServer()
+
+	webHandler := web.NewHandler(cfg, render, auth, chat)
 	webRouter := web.NewRouter(webHandler, flvServer)
 	go web.StartHTTP("web", cfg.WebAddr, webRouter)
 
