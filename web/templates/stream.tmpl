@@ -67,17 +67,20 @@
     </div>
     <div class="chat">
         <h2>Chat</h2>
-        <div class="chat-content">
-            <p>hello!</p>
-            <p>hi!</p>
-            <p>pogchamp</p>
+        <div class="chat-content" id="chat-content">
+
         </div>
         <div class="chat-input">
-            <input type="text"/>
-            <button>Send</button>
+            <input id="chat-input-text" type="text"/>
+            <button onclick="sendChat()">Send</button>
         </div>
     </div>
 </div>
+<script>
+    const chatInput = document.querySelector("#chat-input-text")
+    const chatContent = document.querySelector("#chat-content")
+    const chatName = {{ .Stream.Name }}
+</script>
 <script src="/js/scripts.js"></script>
 </body>
 </html>

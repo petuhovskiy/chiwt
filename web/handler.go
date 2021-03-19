@@ -2,6 +2,7 @@ package web
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/gwuhaolin/livego/configure"
@@ -96,7 +97,15 @@ func (h *Handler) ChatSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	message := r.FormValue("message")
+	var req rtchat.SendRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, err)
+		return
+	}
+
+	message := req.Message
 	h.chat.SendMessage(chat, auth.Username, message)
 }
 

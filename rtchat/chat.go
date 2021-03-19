@@ -1,14 +1,19 @@
 package rtchat
 
-import "sync"
+import (
+	log "github.com/sirupsen/logrus"
+	"sync"
+)
 
 type Chat struct {
+	name  string
 	subs  map[chan Message]struct{}
-	mutex *sync.Mutex
+	mutex sync.Mutex
 }
 
-func NewChat(chat string) *Chat {
+func NewChat(name string) *Chat {
 	return &Chat{
+		name: name,
 		subs: map[chan Message]struct{}{},
 	}
 }
@@ -18,6 +23,8 @@ func (c *Chat) SendMessage(username string, message string) error {
 		From: username,
 		Data: message,
 	}
+
+	log.WithField("name", c.name).WithField("message", msg).Info("new chat message")
 
 	c.broadcast(msg)
 	return nil
