@@ -1,0 +1,112 @@
+.header {
+    background: #343434;
+    color: whitesmoke;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header > * {
+    margin: 10px;
+}
+
+.header :nth-child(2) {
+    margin-left: auto;
+}
+
+body {
+    margin: 0;
+}
+
+.header-site-link {
+    color: #fff;
+    font-size: 25px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.header-action-link {
+    color: #b4b4b4;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.header-action-link:hover {
+    color: #fff;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    grid-template-rows: 1fr auto;
+    grid-gap: 20px;
+    height: 100vh;
+}
+
+.nav-bar {
+    background-color: rgb(247, 246, 243);
+}
+
+.main-content {
+}
+
+.main-content > video {
+    max-width: 100%;
+}
+
+.chat-content {
+    border: solid #343434 3px;
+    padding: 5px;
+}
+
+.chat-input {
+    margin-top: 10px;
+}
+
+.signin-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.signin-box {
+    background: gainsboro;
+    display: flex;
+    flex-direction: column;
+    border-radius: 2px;
+}
+
+.signin-header {
+    text-align: center;
+}
+
+.signin-item {
+
+}
+
+.signin-form {
+    display: flex;
+    flex-direction: row;
+    padding: 30px;
+}
+
+.hidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.form-input {
+
+}
+
+.form-login input[type="submit"] {
+
+}

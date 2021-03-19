@@ -1,0 +1,86 @@
+{{- /*gotype: github.com/petuhovskiy/chiwt/web.RenderContext*/ -}}
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Chiwt</title>
+    <meta name="description" content="Chiwt — self-hosted streaming platform">
+    <meta name="author" content="">
+
+    <link rel="stylesheet" href="/css/styles.css?v=1.0">
+
+</head>
+
+<body>
+<header class="header">
+    <a class="header-site-link" href="/">
+        chiwt
+    </a>
+    {{ if .Auth.LoggedIn }}
+        <a class="header-action-link" href="/w/{{ .Auth.Username }}">
+            {{ .Auth.Username }}
+        </a>
+        <a class="header-action-link" href="/logout">
+            Logout
+        </a>
+    {{ else }}
+        <a class="header-action-link" href="/signin">
+            Sign In
+        </a>
+    {{ end }}
+</header>
+<div class="content">
+    <div class="nav-bar">
+        <h2>Live streams</h2>
+        <ul>
+            <li>stream1</li>
+            <li>stream2</li>
+            <li>stream3</li>
+        </ul>
+    </div>
+    <div class="main-content">
+        {{ if .Stream.IsLive }}
+        <h2>{{ .Stream.Name }} is now streaming</h2>
+        {{ else }}
+            <h2>{{ .Stream.Name }} is not live, come back later</h2>
+        {{ end }}
+
+        <video controls="controls" src="{{ .Stream.VideoLink }}" autoplay="autoplay" muted>
+            <!-- Fallback here -->
+            No video :(
+        </video>
+
+        <hr>
+
+        {{ with .SetupInfo }}
+        <h2>How to stream</h2>
+
+        <ul>
+            <li>Open OBS</li>
+            <li>Settings -> Stream -> Service -> Custom</li>
+            <li>Server: <code>rtmp://localhost:1935/live</code></li>
+            <li>Stream Key: <code>rfBd56ti2SMtYvSgD5xAV0YU99zampta7Z7S575KLkIZ9PYk</code></li>
+        </ul>
+        {{ end }}
+    </div>
+    <div class="chat">
+        <h2>Chat</h2>
+        <div class="chat-content" id="chat-content">
+
+        </div>
+        <div class="chat-input">
+            <input id="chat-input-text" type="text"/>
+            <button onclick="sendChat()">Send</button>
+        </div>
+    </div>
+</div>
+<script>
+    const chatInput = document.querySelector("#chat-input-text")
+    const chatContent = document.querySelector("#chat-content")
+    const chatName = {{ .Stream.Name }}
+</script>
+<script src="/js/scripts.js"></script>
+</body>
+</html>

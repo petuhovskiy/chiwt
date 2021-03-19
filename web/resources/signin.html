@@ -1,0 +1,45 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Chiwt</title>
+    <meta name="description" content="Chiwt — self-hosted streaming platform">
+    <meta name="author" content="">
+
+    <link rel="stylesheet" href="css/styles.css?v=1.0">
+
+</head>
+
+<body>
+<header class="header">
+    <a class="header-site-link" href="/">
+        chiwt
+    </a>
+    <a class="header-action-link" href="/signin">
+        Sign In
+    </a>
+</header>
+<div class="signin-content">
+    <div class="signin-box">
+        <div class="signin-header">
+            <h1>Sign In</h1>
+        </div>
+        <div class="signin-item">
+            <form action="/signin" method="post" class="signin-form">
+                <div class="form-field">
+                    <label class="user" for="username"><span class="hidden">Username</span></label>
+                    <input name="username" id="username" type="text" class="form-input" placeholder="Username" required>
+                </div>
+
+                <div class="form-field">
+                    <input type="submit" value="Let Me In">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="js/scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+{{- /*gotype: github.com/petuhovskiy/chiwt/web.RenderContext*/ -}}
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Chiwt</title>
+    <meta name="description" content="Chiwt — self-hosted streaming platform">
+    <meta name="author" content="">
+
+    <link rel="stylesheet" href="/css/styles.css?v=1.0">
+
+</head>
+
+<body>
+<header class="header">
+    <a class="header-site-link" href="/">
+        chiwt
+    </a>
+    {{ if .Auth.LoggedIn }}
+        <a class="header-action-link" href="/w/{{ .Auth.Username }}">
+            {{ .Auth.Username }}
+        </a>
+        <a class="header-action-link" href="/logout">
+            Logout
+        </a>
+    {{ else }}
+        <a class="header-action-link" href="/signin">
+            Sign In
+        </a>
+    {{ end }}
+</header>
+<div class="content">
+    <div class="nav-bar">
+        <h2>Live streams</h2>
+        <ul>
+            <li>stream1</li>
+            <li>stream2</li>
+            <li>stream3</li>
+        </ul>
+    </div>
+    <div class="main-content">
+        {{ if .Auth.LoggedIn }}
+            Welcome, {{ .Auth.Username }}!
+        {{ else }}
+            <p>Welcome!</p>
+            <p>Please <a href="/signin">sign in</a>, if you want to stream.</p>
+        {{ end }}
+    </div>
+    <div class="chat">
+        <h2>Chat</h2>
+        <div class="chat-content">
+            <code>is not available here</code>
+        </div>
+        <div class="chat-input">
+            <input type="text"/>
+            <button disabled>Send</button>
+        </div>
+    </div>
+</div>
+<script src="/js/scripts.js"></script>
+</body>
+</html>
