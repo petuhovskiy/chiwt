@@ -42,7 +42,7 @@
     </div>
     <div class="main-content">
         {{ if .Stream.IsLive }}
-        <h2>{{ .Stream.Name }} is now streaming</h2>
+            <h2>{{ .Stream.Name }} is now streaming</h2>
         {{ else }}
             <h2>{{ .Stream.Name }} is not live, come back later</h2>
         {{ end }}
@@ -55,14 +55,14 @@
         <hr>
 
         {{ with .SetupInfo }}
-        <h2>How to stream</h2>
+            <h2>How to stream</h2>
 
-        <ul>
-            <li>Open OBS</li>
-            <li>Settings -> Stream -> Service -> Custom</li>
-            <li>Server: <code>rtmp://localhost:1935/live</code></li>
-            <li>Stream Key: <code>rfBd56ti2SMtYvSgD5xAV0YU99zampta7Z7S575KLkIZ9PYk</code></li>
-        </ul>
+            <ul>
+                <li>Open OBS</li>
+                <li>Settings -> Stream -> Service -> Custom</li>
+                <li>Server: <code>{{ .Server }}</code></li>
+                <li>Stream Key: <code>{{ .StreamKey }}</code></li>
+            </ul>
         {{ end }}
     </div>
     <div class="chat">
