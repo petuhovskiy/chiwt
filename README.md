@@ -1,6 +1,12 @@
 # chiwt
 Self-hosted twitch-like service
 
+## Run with Docker
+
+```shell
+docker run -d -p 80:8080 -p 1935:1935 --name chiwt arthurwow/chiwt
+```
+
 ## Использование
 
 ```

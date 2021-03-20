@@ -142,7 +142,7 @@ func (h *Handler) WatchStream(w http.ResponseWriter, r *http.Request) {
 		}
 
 		ctx.SetupInfo = &SetupInfo{
-			Server:    "rtmp://localhost:1935/live",
+			Server:    "rtmp://localhost:1935/live", // TODO:
 			StreamKey: streamKey,
 		}
 	}
