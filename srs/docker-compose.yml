@@ -1,0 +1,33 @@
+version: '3.3'
+
+services:
+  main:
+    image: ossrs/srs:3
+    ports:
+      - "8080:8080"
+      - "1935:1935"
+      - "1985:1985"
+    volumes:
+      - ./main.conf:/usr/local/srs/conf/srs.conf
+  
+  edge1:
+    image: ossrs/srs:3
+    ports:
+      - "8081:8080"
+      - "1936:1935"
+      - "1986:1985"
+    volumes:
+      - ./edge.conf:/usr/local/srs/conf/srs.conf
+    depends_on:
+      - main
+
+  edge2:
+    image: ossrs/srs:3
+    ports:
+      - "8082:8080"
+      - "1937:1935"
+      - "1987:1985"
+    volumes:
+      - ./edge.conf:/usr/local/srs/conf/srs.conf
+    depends_on:
+      - main
