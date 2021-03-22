@@ -8,7 +8,6 @@
     <title>Chiwt</title>
     <meta name="description" content="Chiwt — self-hosted streaming platform">
     <meta name="author" content="">
-
     <link rel="stylesheet" href="/css/styles.css?v=1.0">
 
 </head>
@@ -47,10 +46,25 @@
             <h2>{{ .Stream.Name }} is not live, come back later</h2>
         {{ end }}
 
-        <video controls="controls" src="{{ .Stream.VideoLink }}" autoplay="autoplay" muted>
+        <script src="http://bilibili.github.io/flv.js/dist/flv.js"></script>
+        <video controls="controls" id="videoElement" autoplay="autoplay" muted>
             <!-- Fallback here -->
             No video :(
         </video>
+
+        <script>
+            if (flvjs.isSupported()) {
+                var videoElement = document.getElementById('videoElement');
+                var flvPlayer = flvjs.createPlayer({
+                    type: 'flv',
+                    url: '{{ .Stream.VideoLink }}'
+                });
+                flvPlayer.attachMediaElement(videoElement);
+                flvPlayer.load();
+                flvPlayer.play();
+            }
+        </script>
+
 
         <hr>
 

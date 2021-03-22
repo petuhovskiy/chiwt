@@ -3,7 +3,7 @@ package myflv
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/gwuhaolin/livego/av"
-	"github.com/gwuhaolin/livego/protocol/httpflv"
+	"github.com/petuhovskiy/chiwt/httpflv"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 )
