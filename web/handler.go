@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi/v5"
-	"github.com/gwuhaolin/livego/configure"
+	"github.com/petuhovskiy/chiwt/bcast"
 	"github.com/petuhovskiy/chiwt/conf"
 	"github.com/petuhovskiy/chiwt/rtchat"
 	log "github.com/sirupsen/logrus"
@@ -14,21 +14,28 @@ import (
 	"net/url"
 )
 
-type Handler struct {
-	cfg    *conf.App
-	render *Render
-	httpFS http.Handler
-	auth   *Auth
-	chat   *rtchat.Server
+type Streams interface {
+	SetupInfo(username string) *bcast.SetupInfo
+	WatchInfo(req bcast.WatchRequest) *bcast.WatchInfo
 }
 
-func NewHandler(cfg *conf.App, render *Render, auth *Auth, chat *rtchat.Server) *Handler {
+type Handler struct {
+	cfg     *conf.App
+	render  *Render
+	httpFS  http.Handler
+	auth    *Auth
+	chat    *rtchat.Server
+	streams Streams
+}
+
+func NewHandler(cfg *conf.App, render *Render, auth *Auth, chat *rtchat.Server, streams Streams) *Handler {
 	return &Handler{
-		cfg:    cfg,
-		render: render,
-		httpFS: http.FileServer(http.FS(resources)),
-		auth:   auth,
-		chat:   chat,
+		cfg:     cfg,
+		render:  render,
+		httpFS:  http.FileServer(http.FS(resources)),
+		auth:    auth,
+		chat:    chat,
+		streams: streams,
 	}
 }
 
@@ -127,24 +134,23 @@ func (h *Handler) MainPage(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) WatchStream(w http.ResponseWriter, r *http.Request) {
 	username := chi.URLParam(r, "username")
+	quality := r.URL.Query().Get("quality")
+
+	info := h.streams.WatchInfo(bcast.WatchRequest{
+		Name:    username,
+		Quality: quality,
+	})
 
 	ctx := h.renderCtx(r)
 	ctx.Stream = CurrentStream{
 		Name:      username,
-		VideoLink: h.streamSource(username),
+		VideoLink: info.StreamURL,
+		Info:      info,
 		IsLive:    true,
 	}
 
 	if ctx.Auth.LoggedIn && ctx.Auth.Username == username {
-		streamKey, err := configure.RoomKeys.GetKey(username)
-		if err != nil {
-			log.WithError(err).Fatal("failed to get stream key")
-		}
-
-		ctx.SetupInfo = &SetupInfo{
-			Server:    "rtmp://localhost:1935/live", // TODO:
-			StreamKey: streamKey,
-		}
+		ctx.SetupInfo = h.streams.SetupInfo(username)
 	}
 
 	h.render.Stream(w, ctx)
@@ -161,16 +167,6 @@ func (h *Handler) Static(w http.ResponseWriter, r *http.Request) {
 	r2.URL.Path = p
 	r2.URL.RawPath = rp
 	h.httpFS.ServeHTTP(w, r2)
-}
-
-func (h *Handler) streamSource(name string) string {
-	//http://127.0.0.1:7002/live/movie.m3u8
-	//http://127.0.0.1:7001/live/movie.flv
-
-	//const host = "http://127.0.0.1:7001"
-	//return fmt.Sprintf("%s/live/%s.flv", host, name)
-
-	return "/live/" + name + ".flv"
 }
 
 func (h *Handler) renderCtx(r *http.Request) RenderContext {

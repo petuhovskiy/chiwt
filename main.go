@@ -32,7 +32,14 @@ func main() {
 
 	chat := rtchat.NewServer()
 
-	webHandler := web.NewHandler(cfg, render, auth, chat)
+	var streams web.Streams
+	if cfg.EnableIngestor {
+		streams = bcast.NewIngestor(cfg)
+	} else {
+		streams = bcast.NewLivegoStreams(cfg)
+	}
+
+	webHandler := web.NewHandler(cfg, render, auth, chat, streams)
 	webRouter := web.NewRouter(webHandler, flvServer)
 	go web.StartHTTP("web", cfg.WebAddr, webRouter)
 

@@ -1,18 +1,16 @@
 package web
 
+import "github.com/petuhovskiy/chiwt/bcast"
+
 type RenderContext struct {
 	Auth      AuthContext
 	Stream    CurrentStream
-	SetupInfo *SetupInfo
+	SetupInfo *bcast.SetupInfo
 }
 
 type CurrentStream struct {
 	Name      string
 	VideoLink string
 	IsLive    bool
-}
-
-type SetupInfo struct {
-	Server    string
-	StreamKey string
+	Info      *bcast.WatchInfo
 }
