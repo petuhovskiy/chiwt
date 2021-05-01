@@ -10,6 +10,31 @@ docker run -d -p 80:8080 -p 1935:1935 --name chiwt arthurwow/chiwt
 
 Также есть более сложный вариант, со всеми фичами, для его запуска можно смотреть на docker-compose.yml и srs/.
 
+<details>
+  <summary>docker-compose.yml для сложного варианта</summary>
+  
+```yml
+version: '3.3'
+
+services:
+  web:
+    image: arthurwow/chiwt
+    container_name: chiwt
+    ports:
+      - "80:8080"
+      - "1935:1935"
+    environment:
+      - WEB_ADDR=:8080
+      - ENABLE_INGESTOR=false
+      - INGESTOR_UPLOAD=rtmp://main.diko.me:1935/live
+      - INGESTOR_WATCH=http://main.diko.me:8080/,http://1.cdn.diko.me:8080/,http://2.cdn.diko.me:8080/
+      - AVAILABLE_QUALITY=1080p,720p,480p,360p,240p
+      - ORIGINAL_PREFIX=live/
+      - ENCODED_PREFIX=shakaled/
+```
+  
+</details>
+
 ## Запустить локально
 
 ```
